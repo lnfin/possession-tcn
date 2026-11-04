@@ -59,7 +59,7 @@ open data only. No file of the provided match was on that machine. The image was
 The setup script expects this repository at `/workspace/tree`:
 
 ```bash
-git clone <this repository> /workspace/tree && cd /workspace/tree
+git clone https://github.com/lnfin/broke-boys-mtah /workspace/tree && cd /workspace/tree
 bash analysis/clean/pod_setup.sh /workspace        # environment, Metrica, IDSSE download and parse
 source /workspace/env.sh
 for s in p2 p3 p3b p4 p4eval p5 p6 p8train p8 p9 p10bands registry; do
