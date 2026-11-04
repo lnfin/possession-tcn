@@ -1,0 +1,7 @@
+# Training and selection, installed by analysis/clean/pod_setup.sh on top of the pod image
+# runpod/pytorch:1.0.3-cu1281-torch291-ubuntu2404, which provides torch==2.9.1+cu128.
+# The full environment of the run is recorded in pip_freeze_pod.txt.
+-r ../requirements.txt
+scipy==1.17.1
+kloppy==3.18.0
+pytest==9.2.0

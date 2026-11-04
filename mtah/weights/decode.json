@@ -1,0 +1,10 @@
+{
+ "r0": 0.75,
+ "switch": 64.0,
+ "dead": 64.0,
+ "kappa": 0.0,
+ "switch_min": 0.0,
+ "use_boundary": false,
+ "use_events": false,
+ "model_id": "S0"
+}

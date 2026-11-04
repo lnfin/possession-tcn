@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+data/
+cache/
+out/
+*.mp4
+.venv-run/
+docs/clean_rebuild/
+*.csv
+*.npy
+*_atd.txt
+*_atd.xml
+*_smart_tagging.xml
+*_homography.csv
