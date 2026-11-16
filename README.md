@@ -1,6 +1,6 @@
 # Broke Boys: ball possession from automatic tracking
 
-More Than A Hack 2027. From the provided tracking of BAR-ATH, the code labels every video frame
+From the provided tracking of BAR-ATH, the code labels every video frame
 `H`, `A`, `D` or `X`. The model is a temporal CNN followed by a three-state Viterbi decoder.
 It was trained only on open matches from other sources, and every value with a real choice was
 picked on those matches by a fixed procedure. The technical document is
@@ -59,7 +59,7 @@ open data only. No file of the provided match was on that machine. The image was
 The setup script expects this repository at `/workspace/tree`:
 
 ```bash
-git clone https://github.com/lnfin/broke-boys-mtah /workspace/tree && cd /workspace/tree
+git clone https://github.com/lnfin/possession-tcn /workspace/tree && cd /workspace/tree
 bash analysis/clean/pod_setup.sh /workspace        # environment, Metrica, IDSSE download and parse
 source /workspace/env.sh
 for s in p2 p3 p3b p4 p4eval p5 p6 p8train p8 p9 p10bands registry; do

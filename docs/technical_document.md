@@ -12,9 +12,9 @@ Smart Tagging file.
 tuned values and several competing versions. Its thresholds, mechanisms and versions were chosen
 with the help of human-made data about this match:
 
-- hand labels on stretches of the match, made by both team members: the public five minutes and
-  windows w1 to w7. One member labelled the public window blind and then compared the labels with
-  its official ground truth;
+- hand labels on stretches of the match: the public five minutes, labelled by two team members,
+  and windows w1 to w3, labelled by one of them. One member labelled the public window blind and
+  then compared the labels with its official ground truth;
 - per-frame human verdicts on individual frames;
 - runs on the public five minutes against their ground truth, used for tuning and for choosing
   between versions.
