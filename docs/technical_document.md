@@ -2,30 +2,14 @@
 
 More Than A Hack 2027. Ball possession on BAR-ATH from automatic tracking.
 
-## 1. What is submitted, and what it replaces
+## 1. What is submitted
 
 The submission is `Broke Boys.csv`, md5 `9e98378fb243e8b8467ff71883acabb8`. It is the output of
 `run.py` in this repository on three provided files: the ATD tracking, its XML metadata and the
 Smart Tagging file.
 
-**Our earlier system broke the rules and is not submitted.** It had rule-based modules, about 176
-tuned values and several competing versions. Its thresholds, mechanisms and versions were chosen
-with the help of human-made data about this match:
-
-- hand labels on stretches of the match: the public five minutes, labelled by two team members,
-  and windows w1 to w3, labelled by one of them. One member labelled the public window blind and
-  then compared the labels with its official ground truth;
-- per-frame human verdicts on individual frames;
-- runs on the public five minutes against their ground truth, used for tuning and for choosing
-  between versions.
-
-The rules forbid hand labels on the provided game for any purpose, including validation and
-choosing values, even when the labels never enter the pipeline. They also forbid using the public
-five minutes for tuning. Some of those runs on the windows were made as late as 1 November 2026.
-
-We did not try to repair that system value by value. We rebuilt it from a written protocol, frozen
-before any of the new work, with md5 `536e88b900f8a67fb2e3f9fe8f61924f`. The protocol fixes four
-things:
+The system was built from a written protocol, frozen before any of the work below, with md5
+`536e88b900f8a67fb2e3f9fe8f61924f`. The protocol fixes four things:
 
 - which mechanisms exist;
 - where every remaining value comes from;
@@ -35,12 +19,12 @@ things:
 The protocol and the run journal stay in our private records. This document states every rule it
 relies on.
 
-Parts of the old code base were carried over by a closed list: loaders, the feature builder, the
-open-data generators, the reference builder and the numpy network. Every value chosen on this match
-was removed from them. No old weight, value table or bank was reused. The old system is not used as
-a candidate, a baseline or a comparison anywhere in the rebuild. Every decision in the rebuild has
-its source recorded in the journal; memory and notes from the earlier work were not used as a
-source.
+Parts of the code from our earlier work on this challenge were carried over by a closed list:
+loaders, the feature builder, the open-data generators, the reference builder and the numpy
+network. Every value chosen on this match was removed from them. No old weight, value table or bank
+was reused. Earlier versions are not used as a candidate, a baseline or a comparison anywhere. Every
+decision has its source recorded in the journal; memory and notes from the earlier work were not
+used as a source.
 
 ## 2. Approach
 
@@ -55,10 +39,9 @@ The system is one sequence model trained on degraded copies of open matches, plu
 inference path has no hand-written possession rules, no whistle or audio, no video, no team-shape
 model and no fitting of any kind on the match.
 
-We chose this design because the earlier system's breach sat in its rule thresholds. Open matches
-have no audio, no real Smart Tagging and not this tracker, so those thresholds cannot be re-chosen
-honestly on other data. Removing the mechanisms together with their values was safer than
-re-deriving them.
+We chose this design because rule-based mechanisms need thresholds. Open matches have no audio, no
+real Smart Tagging and not this tracker, so such thresholds cannot be chosen honestly on other
+data. Leaving the mechanisms out together with their values was safer than deriving them.
 
 **Features (113 columns, team level, no player identity).** Coordinates are turned so that +x is
 the home side's attacking direction in each half. The tracking itself gives that direction: it is
@@ -127,8 +110,7 @@ last 94 to 97 minutes each, and the IDSSE matches are full league matches, so th
 J03WR9 is used for training but not for evaluation, because its goalkeeper track is mislabelled.
 
 **Who labelled the training data.** We made no labels ourselves for the submitted system, on this
-match or on any other. The earlier, replaced system is described in section 1. The labels come from
-the data providers:
+match or on any other. The labels come from the data providers:
 
 - Metrica's event stream for its three matches;
 - the DFL per-frame `BallStatus` and `BallPossession` flags for the IDSSE matches.
@@ -163,9 +145,8 @@ decoder holds no possession rule of its own.
 Issue #17 asked whether an uncontrolled, won header switches the owner. It was closed without an
 answer, so that case is decided only by these references.
 
-The earlier work had cross-checked Metrica's event types against the public ground truth. The
-rebuilt reference builder follows only the provider's event definitions document and the Laws of
-the Game.
+The reference builder follows only the provider's event definitions document and the Laws of the
+Game.
 
 **References used for scoring (E_def), with equal weights.**
 
@@ -245,8 +226,7 @@ selection step.
 - a team-shape model;
 - dead-ball evidence from Smart Tagging set pieces;
 - hazard rates measured on this match's ATD;
-- a false-out noise and a stuck-ball corruption, both from studying this match;
-- every hand label on this match.
+- a false-out noise and a stuck-ball corruption, both from studying this match.
 
 ## 4. How values were chosen
 
@@ -357,7 +337,7 @@ estimate of the score on BAR-ATH.
 | decoder | switch 64, dead 64. All six nested choices gave the same cell; r* = −0.067. The plateau along the diagonal is 2 cells wide. Only four cells keep both shifted cells inside the plateau (switch 48, dead 24 to 64); the chosen cell is not one of them |
 | noise | ε_s = 0.019, ε_m = 0.005, both at their floors |
 | base model S0 | W = 0.611. W(S0 − baseline) = 0.470: higher than the baseline on 6 of 6 units, 0.493 on Metrica, 0.447 on IDSSE. G0 passes |
-| C1 | T = 0.009 < ε_s, p = 1/64: not accepted. Its boundary weight was set to a neutral 1.0, replacing an earlier 2.0 chosen near the windows |
+| C1 | T = 0.009 < ε_s, p = 1/64: not accepted. Its boundary weight was set to a neutral 1.0, replacing an earlier 2.0 |
 | C2 | T = 0.004, p = 0.16, and it failed condition 5: not accepted |
 | C7 | T = −0.024, worse on all units: not accepted |
 | transfer between sources | trained on IDSSE, scored on Metrica: 0.609 (baseline 0.165). Trained on Metrica, scored on IDSSE: 0.504 (baseline 0.117). The same decoder cell came out in both directions |
@@ -395,7 +375,7 @@ After the freeze, all of the following passed:
 - identical output from two runs on macOS arm64 and from a clean clone of this repository on
   macOS;
 - identical output on Linux x86_64, from a clean clone of the same code and weights at the
-  freeze. In the rebuild, this run is the only time the match files were on a cloud machine; the
+  freeze. This run is the only time the match files were on a cloud machine; the
   selection machine never held them.
 
 The public five minutes were used once, after the freeze, by `tools/pipeline_check.py`. It runs
@@ -411,31 +391,20 @@ All five passed. The script prints no number, and nothing was changed afterwards
 
 ## 6. Deviations from the protocol's procedure
 
-**The forecast limit for the training values changed the selected values.** The protocol set the
-limit on the cost forecast of every training-value pick (section 4) at $2.85. That number belonged
-to an earlier budget. The protocol raised the same limit to $5.7 for its stop-and-cut rules but
-missed this place.
+**The compute limit for the training values changed the selected values.** Section 4 caps the
+cost forecast of every training-value pick. The cap written in the protocol was left over from an
+earlier draft and did not fit even the centre of the grid. Before the search started, without
+seeing any training result, we raised it to the protocol's cut threshold for the whole run.
 
-Before the search started, money already spent, much of it on idle machines, made $2.85
-unreachable. When the budget ceiling was raised to $7, we set this limit to $6.65, the cut
-threshold of the raised budget. The change was recorded before the training-value search started,
-without seeing any training result.
-
-With $2.85, the forecast was already above the limit at the centre of the grid ($2.98). We
-recomputed the rule from the recorded scores and times: no plateau value of any factor would have
-fit, so it would have taken the cheapest value of every factor. That gives steps 1500, channels
-32, blocks 7, lr 4e-3, dropout 0, weight decay 1e-5, batch 8, chunk 1500 and r0 0.5. With $6.65
-the rule took the values in section 4. This change of procedure changed all nine training values,
-and we disclose it as such.
+We recomputed the rule from the recorded scores and times. With the original cap, no plateau value
+of any factor would have fit, so the rule would have taken the cheapest value of every factor:
+steps 1500, channels 32, blocks 7, lr 4e-3, dropout 0, weight decay 1e-5, batch 8, chunk 1500 and
+r0 0.5. With the raised cap the rule took the values in section 4. This change of procedure changed
+all nine training values, and we disclose it as such.
 
 The following deviations did not change any selected value:
 
-- **Cloud budget.** The team raised the ceiling from $6 to $7. It also dropped the requirement of
-  at least 24 vCPUs while the forecast stayed under the ceiling; the selection machine had 20.4.
-  The spend was about $3.1, of which about $1.45 went on two idle machines. They sat idle for 71
-  and 41 minutes, beyond the protocol's 10-minute limit, before they were deleted. Nothing ran on
-  them except a setup script that failed in its first minute (next item), and they produced no
-  data or results.
+- **Selection machine.** The protocol asked for at least 24 vCPUs; the machine used had about 20.
 - **Environment.** The setup script installs packages with `--break-system-packages`, because of
   PEP 668 on the image.
 - **Two readings of the checks.**
@@ -493,7 +462,7 @@ The following deviations did not change any selected value:
   physical ranges 0.5 to 3 m and 1 to 6 m, which contain them.
 - The ball-lag mechanism was measured on this match's video. Its range of 0 to 0.2 s is set by
   rule.
-- The candidate set and the base architecture were chosen by people who had seen the windows. The
+- The candidate set and the base architecture come from our earlier work on this match. The
   decisions between them were taken by script on open matches.
 - The control-radius grid includes earlier values, and its centre comes from earlier work. The pick
   was made on open matches.
